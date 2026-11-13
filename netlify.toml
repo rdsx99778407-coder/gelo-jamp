@@ -1,0 +1,27 @@
+# ============================================================
+# Configuração de deploy do Gelo Jamp na Netlify (plano Free)
+# Netlify detecta Next.js e aplica automaticamente o runtime
+# @netlify/plugin-nextjs — nada precisa ser instalado à parte.
+# ============================================================
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_TELEMETRY_DISABLED = "1"
+  # O build não precisa de banco: páginas públicas e o admin
+  # buscam dados apenas em tempo de requisição.
+
+# Segurança: protege o acesso ao painel e às APIs administrativas
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

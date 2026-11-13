@@ -1,0 +1,77 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  password      String
+  role          String    @default("ADMIN")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Setting {
+  id    String @id @default(uuid())
+  key   String @unique
+  value String
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  products    Product[]
+}
+
+model Product {
+  id          String     @id @default(uuid())
+  name        String
+  description String?
+  weight      String?    @default("5 kg")
+  price       Decimal?
+  image       String?
+  categoryId  String?
+  category    Category?  @relation(fields: [categoryId], references: [id])
+  active      Boolean    @default(true)
+  featured    Boolean    @default(false)
+  sortOrder   Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model GalleryImage {
+  id        String   @id @default(uuid())
+  title     String
+  image     String
+  category  String?  @default("geral")
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id          String   @id @default(uuid())
+  customerName String
+  customerPhone String?
+  productName String?
+  productId    String?
+  message      String?
+  status       String   @default("NOVO")
+  whatsappSent Boolean @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
